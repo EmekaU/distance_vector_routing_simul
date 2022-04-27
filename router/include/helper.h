@@ -3,7 +3,7 @@
 #ifndef DISTANCE_VECTOR_ROUTING_SIMUL_HELPER_H
 #define DISTANCE_VECTOR_ROUTING_SIMUL_HELPER_H
 #include "imports.h"
-
+#define DEBUG_MODE false
 bool port_is_valid(char* port);
 void verify(int val, char* msg);
 long send_packet(int socket, void* packet, int packet_size);

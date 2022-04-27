@@ -1,7 +1,7 @@
 // Author - Emeka Umeozo
 
-#include "router.h"
-#include "helper.h"
+#include "include/router.h"
+#include "include/helper.h"
 
 char my_name;
 char* my_port;
@@ -65,6 +65,7 @@ void print_routing_table(){
         }
         printf("\n");
     }
+    printf("\n\n");
 }
 
 /*
@@ -168,7 +169,9 @@ void send_dist_to_known_routers(){
 
     for (int i = 0; i < MAX_KNOWN_ROUTES; ++i) { // for each known router to send info to
         if (neighbours[i].name != 0 && neighbours[i].socket != -1){
-            printf("Sending to Neighbour %c\n", neighbours[i].name);
+            if(DEBUG_MODE){
+                printf("Sending to Neighbour %c\n", neighbours[i].name);
+            }
             for (int dest_index = 0; dest_index < MAX_KNOWN_ROUTES; dest_index++) { // get cost to each known router
                 dest = get_ascii_equivalent(dest_index);
                 dist_to_dest = routing_table[my_index][dest_index];
@@ -179,9 +182,13 @@ void send_dist_to_known_routers(){
                     // its shortest path length to y is infinity
 
                     next_hop = get_next_hop(dest);
-                    printf("Next hop to Neighbour %c = %c\n", dest, next_hop);
+                    if(DEBUG_MODE){
+                        printf("Next hop to Neighbour %c = %c\n", dest, next_hop);
+                    }
                     if(next_hop == neighbours[i].name && neighbours[i].name != dest){
-                        printf("setting cost to infinity\n");
+                        if(DEBUG_MODE){
+                            printf("setting cost to infinity\n");
+                        }
                         // set infinity if next hop is neighbour being advertised to and if its not the destination route
                         route_info.cost = INFINITY;
                     }else{
@@ -247,20 +254,25 @@ void run_router() {
 
         for (int socket = 0; socket < FD_SETSIZE; socket++) {
             if (FD_ISSET(socket, &ready_sockets)) {
-                printf("socket %d triggered!!\n", socket);
+                if(DEBUG_MODE){
+                    printf("socket %d triggered!!\n", socket);
+                }
                 if (socket == host_sock) {
                     conn_sock = accept_new_connection(host_sock);
-                    printf("recvd conn request. setting socket to %d\n", socket);
+                    if(DEBUG_MODE){
+                        printf("recvd conn request. setting socket to %d\n", socket);
+                    }
                     FD_SET(conn_sock, &current_sockets);
                 } else {
                     if (recv(socket, &route_info, sizeof(route_info), 0) > 0) {
 
-                        printf("recvd route info pack from socket %d\n", socket);
-                        printf("type = %d \n", route_info.type);
-                        printf("dest = %c \n", route_info.dest);
-                        printf("src = %c \n", route_info.src);
-                        printf("cost = %d \n", route_info.cost);
-
+                        if(DEBUG_MODE){
+                            printf("recvd route info pack from socket %d\n", socket);
+                            printf("type = %d \n", route_info.type);
+                            printf("dest = %c \n", route_info.dest);
+                            printf("src = %c \n", route_info.src);
+                            printf("cost = %d \n", route_info.cost);
+                        }
                         if (route_info.type == greet) {
                             route route_ack = {ack, my_name, my_name, 0};
                             update_routing_table(my_name, route_info.src, 1);
@@ -290,7 +302,6 @@ void run_router() {
                             update_routing_table(route_info.src, route_info.dest, route_info.cost);
                         }
                     } else {
-                        printf("Socket %d is closed\n", socket);
                         for (int i = 0; i < MAX_KNOWN_ROUTES; ++i) {
                             if(neighbours[i].socket == socket){
                                 printf("Router %c is offline\n", neighbours[i].name);
@@ -311,7 +322,9 @@ void run_router() {
 void connect_to_neighbours(){
     struct addrinfo hints;
     int addr_stat;
-    printf("Connecting to neighbours...\n");
+    if(DEBUG_MODE){
+        printf("Connecting to neighbours...\n");
+    }
     for (int i = 0; i < MAX_KNOWN_ROUTES; ++i) {
         if (strcmp(neighbours[i].port, "") == 0 || !neighbours[i].is_post_linked){
             continue;
@@ -326,12 +339,16 @@ void connect_to_neighbours(){
             // connect & set router's socket
             neighbours[i].socket = get_socket(addr_stat, addr_info_list, false);
             if (neighbours[i].socket != -1){
-                printf("Connected! socket = %d\n", neighbours[i].socket);
+                if(DEBUG_MODE){
+                    printf("Connected! socket = %d\n", neighbours[i].socket);
+                }
                 FD_SET(neighbours[i].socket, &current_sockets);
                 greet_neighbour(neighbours[i].socket);
             }
         }else{
-            printf("Already connected, socket = %d\n", neighbours[i].socket);
+            if(DEBUG_MODE){
+                printf("Already connected, socket = %d\n", neighbours[i].socket);
+            }
         }
     }
 }
@@ -344,7 +361,6 @@ void connect_to_neighbours(){
  */
 bool is_connected(int socket){
 
-//    printf("checking if sock %d is connected\n", socket);
     long bytes;
     if (socket < 0){
         return false;
@@ -420,7 +436,5 @@ long greet_neighbour(int socket){
     long bytes;
     route r = {greet, my_name, my_name, 0};
     bytes = send_packet(socket, &r, sizeof(r));
-    printf("greeting sock %d with {%c %c %d}\n", socket, my_name, my_name, 0);
-
     return bytes;
 }
