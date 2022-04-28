@@ -1,2 +1,2 @@
 #!/bin/sh
-cd out/build/; make
+cd build; make

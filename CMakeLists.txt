@@ -3,7 +3,7 @@ project(dvRouter)
 add_subdirectory(kafkaService)
 
 #Download json-c submodule
-find_package(GIT QUIET)
+find_package(Git QUIET)
 if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     #UPDATE SUBMODULE AS NEEDED
     option(GIT_SUBMODULE "Check json-c submodule during build" ON)

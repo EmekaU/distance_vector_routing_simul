@@ -5,7 +5,8 @@
 #include <librdkafka/rdkafka.h>
 #define TOPIC "routes"
 
+//int create_producer(rd_kafka_t **rk, rd_kafka_conf_t *conf, char *errstr);
+//void *produce(rd_kafka_t **rk, char* key, char* payload);
+void produce(char* key, void* payload);
 void initialize_kafka_service();
-void produce(char* key, char* payload, int32_t partition);
-void terminate_producer();
 #endif //DISTANCE_VECTOR_ROUTING_SIMUL_KAFKAPROP_H

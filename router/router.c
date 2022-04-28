@@ -2,6 +2,8 @@
 
 #include "include/router.h"
 #include "include/helper.h"
+#include <json.h>
+#include "producer.h"
 
 char my_name;
 char* my_port;
@@ -37,6 +39,7 @@ int main(int argc, char* argv[]){
     }
 
     FD_ZERO(&current_sockets);
+    initialize_kafka_service();
     init_routing_table();
     update_routing_table(my_name, my_name, 0);
     print_routing_table();
@@ -204,12 +207,22 @@ void send_dist_to_known_routers(){
     }
 }
 
-//void send_data_to_kafka_topic(){
-//    int my_index = get_table_row_index(my_name);
-//    for (int i = 0; i < MAX_KNOWN_ROUTES; i++) { // get cost to each router
-//        routing_table[my_index][i];
-//    }
-//}
+void send_routes_to_kafka_topic(){
+    char key[2] = "";
+
+    json_object * routes = json_object_new_object();
+
+    int my_index = get_table_row_index(my_name);
+    for (int i = 0; i < MAX_KNOWN_ROUTES; i++) { // get cost to each router
+        if(routing_table[my_index][i] != impossible_number){
+            json_object *distance = json_object_new_int(routing_table[my_index][i]);
+            sprintf(key, "%c", get_ascii_equivalent(i));
+            json_object_object_add(routes,key, distance);
+        }
+    }
+    printf("The JSON Object to be sent: %sn \n", json_object_to_json_string(routes));
+    produce(key, routes);
+}
 
 void run_router() {
 
@@ -239,6 +252,7 @@ void run_router() {
         if ((current_time.tv_sec - last_update_time.tv_sec) >= TIMEOUT) {
             connect_to_neighbours();
             send_dist_to_known_routers();
+            send_routes_to_kafka_topic();
             print_next_hop_for_each_known_router();
             print_routing_table();
             last_update_time = getTime();
