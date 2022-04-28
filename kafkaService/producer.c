@@ -51,7 +51,6 @@ void initialize_kafka_service(){
 }
 
 void produce(char* key, void* payload){
-    printf("Producing message\n");
     if (rd_kafka_produce(topic, RD_KAFKA_PARTITION_UA, RD_KAFKA_MSG_F_COPY, payload, sizeof(payload), key, strlen(key), NULL) == -1){
         fprintf(stderr, "%% Failed to produce to topic %s: %s\n", TOPIC, rd_kafka_err2str(errno));
     }
@@ -67,6 +66,6 @@ void terminate_producer(){
                 rd_kafka_outq_len(producer_handle));
 
     /* 2) Destroy the topic and handle objects */
-    rd_kafka_topic_destroy(topic);  /* Repeat for all topic objects held */
+    rd_kafka_topic_destroy(topic);
     rd_kafka_destroy(producer_handle);
 }
