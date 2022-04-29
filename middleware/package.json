@@ -1,0 +1,14 @@
+{
+  "name": "middleware",
+  "version": "1.0.0",
+  "description": "Middleware connects the routing program to the UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emeka Umeozo",
+  "license": "ISC",
+  "devDependencies": {
+    "kafkajs": "^1.16.0"
+  }
+}

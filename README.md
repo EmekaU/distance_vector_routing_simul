@@ -9,7 +9,7 @@ Check out the `documentation.txt` file for more details.
 
 ## RoadMap
 - [x] Routing Algorithm
-- [x] Kafka Integration(production and consumption)
+- [x] Kafka Integration(production)
 - [ ] Vue Interface
 
 ## Dependencies
