@@ -1,7 +1,7 @@
 # Distance Vector Routing Simulation
 ## About the Program
 
-This program is designed to show how the distance routing protocol works with the [poisoned reverse algorithm](https://en.wikipedia.org/wiki/Split_horizon_route_advertisement)
+This program is designed to show how the distance routing protocol works with the [poisoned reverse algorithm](https://en.wikipedia.org/wiki/Split_horizon_route_advertisement).
 The distance vector routing protocol uses the bellman-ford algorithm to share its distance to other routers.
 Each router maintains a routing table that contains the distance between itself and all possible destination nodes.
 Every 10 seconds, or when the routing table changes, each router prints its router table, sends its distances its neighbour routers and to the kafka topic.
