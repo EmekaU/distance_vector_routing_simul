@@ -1,11 +1,10 @@
 # Distance Vector Routing Simulation
 ## About the Program
 
-This program is designed to simulate the distance vector algorithm using router processes.
-Each process maintains a routing table and sends to its neighbours, its best known distance to each destination router.
-Periodically, each router prints its router table, sends its distances its neighbour routers and to the kafka topic.
-
-Check out the `documentation.txt` file for more details.
+This program is designed to show how the distance routing protocol works with the [https://en.wikipedia.org/wiki/Split_horizon_route_advertisement]poisoned reverse algorithm.
+The distance vector routing protocol uses the bellman-ford algorithm to share its distance to other routers. 
+Each router maintains a routing table that contains the distance between itself and all possible destination nodes.
+Every 10 seconds, or when the routing table changes, each router prints its router table, sends its distances its neighbour routers and to the kafka topic.
 
 ## RoadMap
 - [x] Routing Algorithm
@@ -23,6 +22,6 @@ Check out the `documentation.txt` file for more details.
 - Run `./configure.sh` to build cmake dependencies.
 - Run `./build.sh` to link libraries and build executable.
 - Enter `build/router/dvRouter <router name> <router port> <neighbour ports>` to run the router.
-
+  (Max number of neighbours = 25)
 ### Vue Interface:
 - In progress
